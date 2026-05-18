@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Reflection;
 using System.Windows;
 using H.NotifyIcon.Core;
 using KickChatOverlay.Services;
@@ -10,15 +11,13 @@ namespace KickChatOverlay;
 public partial class App : Application
 {
     private TrayIconWithContextMenu? _trayIcon;
-    private IntPtr _iconHandle;
+    private Icon? _appIcon;
 
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
 
-        using var icon = CreateAppIcon();
-        _iconHandle = icon.Handle;
-
+        _appIcon = LoadAppIcon();
         CreateTrayIcon();
 
         LocalizationService.Instance.PropertyChanged += (_, _) =>
@@ -30,7 +29,7 @@ public partial class App : Application
     protected override void OnExit(ExitEventArgs e)
     {
         _trayIcon?.Dispose();
-        DestroyIcon(_iconHandle);
+        _appIcon?.Dispose();
         base.OnExit(e);
     }
 
@@ -44,13 +43,17 @@ public partial class App : Application
         };
         _trayIcon.Create();
         _trayIcon.UpdateToolTip(LocalizationService.Instance["TrayToolTip"]);
-        _trayIcon.UpdateIcon(_iconHandle);
+        _trayIcon.UpdateIcon(_appIcon!.Handle);
     }
 
-    [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
-    private static extern bool DestroyIcon(IntPtr hIcon);
+    private static Icon LoadAppIcon()
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        using var stream = assembly.GetManifestResourceStream("KickChatOverlay.Resources.kick.ico");
+        return stream != null ? new Icon(stream) : CreateFallbackIcon();
+    }
 
-    private static Icon CreateAppIcon()
+    private static Icon CreateFallbackIcon()
     {
         using var bmp = new Bitmap(16, 16);
         using var g = Graphics.FromImage(bmp);
@@ -59,11 +62,14 @@ public partial class App : Application
         g.DrawString("KC", font, Brushes.White, 0, 2);
         var hIcon = bmp.GetHicon();
         var icon = Icon.FromHandle(hIcon);
-        var clonedIcon = (Icon)icon.Clone();
+        var cloned = (Icon)icon.Clone();
         icon.Dispose();
         DestroyIcon(hIcon);
-        return clonedIcon;
+        return cloned;
     }
+
+    [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
+    private static extern bool DestroyIcon(IntPtr hIcon);
 
     private PopupMenu CreateContextMenu()
     {

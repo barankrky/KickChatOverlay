@@ -7,7 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
-    <ApplicationIcon>Resources\app.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\kick.ico</ApplicationIcon>
     <AssemblyName>KickChatOverlay</AssemblyName>
     <Description>Transparent chat overlay for Kick streams</Description>
     <Version>1.0.0</Version>
@@ -25,6 +25,7 @@
   <ItemGroup>
     <Resource Include="Resources\flag-tr.png" />
     <Resource Include="Resources\flag-us.png" />
+    <Resource Include="Resources\kick.ico" />
   </ItemGroup>
 
   <ItemGroup>
