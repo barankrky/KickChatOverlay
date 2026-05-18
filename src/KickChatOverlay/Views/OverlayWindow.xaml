@@ -4,7 +4,8 @@
         xmlns:b="clr-namespace:KickChatOverlay.Behaviors"
         xmlns:vm="clr-namespace:KickChatOverlay.ViewModels"
         xmlns:conv="clr-namespace:KickChatOverlay.Converters"
-        Title="Kick Chat Overlay"
+        xmlns:loc="clr-namespace:KickChatOverlay.Extensions"
+        Title="{loc:Loc WindowTitle}"
         AllowsTransparency="True"
         WindowStyle="None"
         Topmost="True"
@@ -73,20 +74,32 @@
                     MouseLeftButtonDown="TitleBar_MouseLeftButtonDown"
                     Visibility="{Binding IsBorderVisible, Converter={StaticResource BoolToVisibility}}">
                 <DockPanel Margin="8,0">
-                    <TextBlock Text="Kick Chat Overlay"
+                    <TextBlock Text="{loc:Loc TitleBarText}"
                                Foreground="White"
                                VerticalAlignment="Center"
                                FontSize="12"/>
                     <StackPanel DockPanel.Dock="Right"
                                 Orientation="Horizontal"
                                 HorizontalAlignment="Right">
-                        <Button Content="&#x2699;" ToolTip="Settings"
+                        <Button x:Name="LangButton"
+                                Click="LangButton_Click"
+                                ToolTip="{loc:Loc ToolTipLanguage}"
+                                Style="{StaticResource TitleBarButton}"
+                                Width="34">
+                            <Image x:Name="LangFlagImage"
+                                   Source="pack://application:,,,/Resources/flag-tr.png"
+                                   Width="22" Height="16"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Stretch="Uniform"/>
+                        </Button>
+                        <Button Content="&#x2699;" ToolTip="{loc:Loc ToolTipSettings}"
                                 Click="Settings_Click"
                                 Style="{StaticResource TitleBarButton}"/>
-                        <Button Content="&#x2796;" ToolTip="Hide Borders"
+                        <Button Content="&#x2796;" ToolTip="{loc:Loc ToolTipHideBorders}"
                                 Command="{Binding ToggleBordersCommand}"
                                 Style="{StaticResource TitleBarButton}"/>
-                        <Button Content="&#x2716;" ToolTip="Close"
+                        <Button Content="&#x2716;" ToolTip="{loc:Loc ToolTipClose}"
                                 Click="Close_Click"
                                 Style="{StaticResource TitleBarButton}"/>
                     </StackPanel>

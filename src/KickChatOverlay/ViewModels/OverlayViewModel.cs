@@ -17,22 +17,51 @@ public partial class OverlayViewModel : ObservableObject
 
     [ObservableProperty] private bool _isConnected;
     [ObservableProperty] private bool _isBorderVisible = true;
-    [ObservableProperty] private string _statusText = "Disconnected";
+    [ObservableProperty] private string _statusText = "";
     [ObservableProperty] private AppSettings _settings;
     private bool _hasError;
 
     public OverlayViewModel()
     {
         _settings = AppSettings.Load();
+
+        LocalizationService.Instance.SetCulture(_settings.Language);
+        UpdateStatusText("StatusDisconnected");
+
         _soundService.SetSound(_settings.NotificationSound);
 
         _kickService.OnMessageReceived += HandleMessage;
         _kickService.OnError += err =>
-            Application.Current.Dispatcher.InvokeAsync(() => SetError($"Kick error: {err}"));
+            Application.Current.Dispatcher.InvokeAsync(() => SetError(LocalizationService.Instance.Format("StatusKickError", err)));
         _kickService.OnConnected += () =>
-            Application.Current.Dispatcher.InvokeAsync(() => SetStatus("Kick connected"));
+            Application.Current.Dispatcher.InvokeAsync(() => SetStatus("StatusKickConnected"));
         _kickService.OnDisconnected += () =>
-            Application.Current.Dispatcher.InvokeAsync(() => SetStatus("Kick disconnected"));
+            Application.Current.Dispatcher.InvokeAsync(() => SetStatus("StatusKickDisconnected"));
+
+        LocalizationService.Instance.PropertyChanged += (_, _) =>
+        {
+            RefreshStatusText();
+            Settings.Language = LocalizationService.Instance.CurrentLanguageCode;
+            SaveSettings();
+        };
+    }
+
+    private void UpdateStatusText(string key, params object[] args)
+    {
+        StatusText = args.Length > 0
+            ? LocalizationService.Instance.Format(key, args)
+            : LocalizationService.Instance[key];
+    }
+
+    private void RefreshStatusText()
+    {
+        if (_hasError)
+            return;
+
+        if (IsConnected)
+            UpdateStatusText("StatusConnected");
+        else
+            UpdateStatusText("StatusDisconnected");
     }
 
     // Errors stick — non-error status won't overwrite an error
@@ -42,10 +71,10 @@ public partial class OverlayViewModel : ObservableObject
         StatusText = msg;
     }
 
-    private void SetStatus(string msg)
+    private void SetStatus(string key)
     {
         if (!_hasError)
-            StatusText = msg;
+            UpdateStatusText(key);
     }
 
     private void HandleMessage(ChatMessage msg)
@@ -72,22 +101,22 @@ public partial class OverlayViewModel : ObservableObject
 
         if (string.IsNullOrWhiteSpace(Settings.KickUsername))
         {
-            StatusText = "Enter a Kick username";
+            UpdateStatusText("StatusEnterUsername");
             return;
         }
 
-        StatusText = "Connecting...";
+        UpdateStatusText("StatusConnecting");
         try
         {
             var manualId = string.IsNullOrWhiteSpace(Settings.KickChatroomId) ? null : Settings.KickChatroomId.Trim();
             await _kickService.ConnectAsync(Settings.KickUsername, manualId);
             IsConnected = true;
             if (!_hasError)
-                StatusText = "Connected";
+                UpdateStatusText("StatusConnected");
         }
         catch (Exception ex)
         {
-            SetError($"Connection error: {ex.Message}");
+            SetError(LocalizationService.Instance.Format("StatusConnectionError", ex.Message));
         }
     }
 
@@ -97,7 +126,7 @@ public partial class OverlayViewModel : ObservableObject
         await _kickService.DisconnectAsync();
         IsConnected = false;
         _hasError = false;
-        StatusText = "Disconnected";
+        UpdateStatusText("StatusDisconnected");
     }
 
     [RelayCommand]
@@ -110,6 +139,13 @@ public partial class OverlayViewModel : ObservableObject
     private void ClearChat()
     {
         Messages.Clear();
+    }
+
+    public void ToggleLanguage()
+    {
+        var current = LocalizationService.Instance.CurrentLanguageCode;
+        var next = current == "tr" ? "en" : "tr";
+        LocalizationService.Instance.SetCulture(next);
     }
 
     public void PreviewSound(string soundName, double volume)

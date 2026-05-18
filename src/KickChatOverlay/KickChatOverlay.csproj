@@ -23,6 +23,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\flag-tr.png" />
+    <Resource Include="Resources\flag-us.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="H.NotifyIcon" Version="2.4.1" />
     <PackageReference Include="KickLib" Version="1.10.0" />

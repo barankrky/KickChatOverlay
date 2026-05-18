@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Windows;
 using H.NotifyIcon.Core;
+using KickChatOverlay.Services;
 using KickChatOverlay.ViewModels;
 using KickChatOverlay.Views;
 
@@ -9,26 +10,41 @@ namespace KickChatOverlay;
 public partial class App : Application
 {
     private TrayIconWithContextMenu? _trayIcon;
+    private IntPtr _iconHandle;
 
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+
+        using var icon = CreateAppIcon();
+        _iconHandle = icon.Handle;
+
+        CreateTrayIcon();
+
+        LocalizationService.Instance.PropertyChanged += (_, _) =>
+        {
+            Dispatcher.Invoke(CreateTrayIcon);
+        };
+    }
+
+    protected override void OnExit(ExitEventArgs e)
+    {
+        _trayIcon?.Dispose();
+        DestroyIcon(_iconHandle);
+        base.OnExit(e);
+    }
+
+    private void CreateTrayIcon()
+    {
+        _trayIcon?.Dispose();
 
         _trayIcon = new TrayIconWithContextMenu
         {
             ContextMenu = CreateContextMenu()
         };
         _trayIcon.Create();
-        _trayIcon.UpdateToolTip("Kick Chat Overlay");
-
-        using var icon = CreateAppIcon();
-        _trayIcon.UpdateIcon(icon.Handle);
-    }
-
-    protected override void OnExit(ExitEventArgs e)
-    {
-        _trayIcon?.Dispose();
-        base.OnExit(e);
+        _trayIcon.UpdateToolTip(LocalizationService.Instance["TrayToolTip"]);
+        _trayIcon.UpdateIcon(_iconHandle);
     }
 
     [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
@@ -39,7 +55,7 @@ public partial class App : Application
         using var bmp = new Bitmap(16, 16);
         using var g = Graphics.FromImage(bmp);
         using var font = new Font("Arial", 6, System.Drawing.FontStyle.Bold);
-        g.Clear(Color.FromArgb(30, 30, 46)); // dark background
+        g.Clear(Color.FromArgb(30, 30, 46));
         g.DrawString("KC", font, Brushes.White, 0, 2);
         var hIcon = bmp.GetHicon();
         var icon = Icon.FromHandle(hIcon);
@@ -51,14 +67,15 @@ public partial class App : Application
 
     private PopupMenu CreateContextMenu()
     {
+        var loc = LocalizationService.Instance;
         var menu = new PopupMenu();
 
-        menu.Items.Add(new PopupMenuItem("Show Settings", (_, _) => Dispatcher.Invoke(TrayShowSettings)));
+        menu.Items.Add(new PopupMenuItem(loc["MenuShowSettings"], (_, _) => Dispatcher.Invoke(TrayShowSettings)));
 
-        menu.Items.Add(new PopupMenuItem("Toggle Borders", (_, _) =>
+        menu.Items.Add(new PopupMenuItem(loc["MenuToggleBorders"], (_, _) =>
             Dispatcher.Invoke(() => GetViewModel()?.ToggleBordersCommand.Execute(null))));
 
-        menu.Items.Add(new PopupMenuItem("Reset Window Position", (_, _) =>
+        menu.Items.Add(new PopupMenuItem(loc["MenuResetPosition"], (_, _) =>
             Dispatcher.Invoke(() =>
             {
                 var vm = GetViewModel();
@@ -71,12 +88,12 @@ public partial class App : Application
 
         menu.Items.Add(new PopupMenuSeparator());
 
-        menu.Items.Add(new PopupMenuItem("Clear Chat", (_, _) =>
+        menu.Items.Add(new PopupMenuItem(loc["MenuClearChat"], (_, _) =>
             Dispatcher.Invoke(() => GetViewModel()?.ClearChatCommand.Execute(null))));
 
         menu.Items.Add(new PopupMenuSeparator());
 
-        menu.Items.Add(new PopupMenuItem("Exit", (_, _) =>
+        menu.Items.Add(new PopupMenuItem(loc["MenuExit"], (_, _) =>
             Dispatcher.Invoke(() =>
             {
                 GetViewModel()?.SaveSettings();

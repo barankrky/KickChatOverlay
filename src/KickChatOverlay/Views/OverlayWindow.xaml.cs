@@ -1,6 +1,8 @@
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
+using KickChatOverlay.Services;
 using KickChatOverlay.ViewModels;
 
 namespace KickChatOverlay.Views;
@@ -19,6 +21,11 @@ public partial class OverlayWindow : Window
                 if (ChatScrollViewer != null)
                     ChatScrollViewer.ScrollToEnd();
             }, System.Windows.Threading.DispatcherPriority.Loaded);
+        };
+
+        LocalizationService.Instance.PropertyChanged += (_, _) =>
+        {
+            UpdateLangButton();
         };
     }
 
@@ -53,6 +60,19 @@ public partial class OverlayWindow : Window
         Application.Current.Shutdown();
     }
 
+    private void LangButton_Click(object sender, RoutedEventArgs e)
+    {
+        var vm = (OverlayViewModel)DataContext;
+        vm.ToggleLanguage();
+    }
+
+    private void UpdateLangButton()
+    {
+        var lang = LocalizationService.Instance.CurrentLanguageCode;
+        var flag = lang == "tr" ? "tr" : "us";
+        LangFlagImage.Source = new BitmapImage(new Uri($"pack://application:,,,/Resources/flag-{flag}.png"));
+    }
+
     protected override void OnLocationChanged(EventArgs e)
     {
         base.OnLocationChanged(e);
@@ -61,5 +81,10 @@ public partial class OverlayWindow : Window
     protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
     {
         base.OnRenderSizeChanged(sizeInfo);
+    }
+
+    private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+
     }
 }

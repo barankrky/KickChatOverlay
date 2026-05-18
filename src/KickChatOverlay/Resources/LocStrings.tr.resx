@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">text/microsoft-resx</resheader>
+  <resheader name="version">2.0</resheader>
+  <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+  <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+
+  <!-- Window Titles -->
+  <data name="WindowTitle" xml:space="preserve"><value>Kick Chat Overlay</value></data>
+  <data name="SettingsWindowTitle" xml:space="preserve"><value>Ayarlar</value></data>
+
+  <!-- Title Bar -->
+  <data name="TitleBarText" xml:space="preserve"><value>Kick Sohbet Arayüzü ♥︎</value></data>
+  <data name="ToolTipLanguage" xml:space="preserve"><value>Dili Değiştir</value></data>
+  <data name="ToolTipSettings" xml:space="preserve"><value>Ayarlar</value></data>
+  <data name="ToolTipHideBorders" xml:space="preserve"><value>Kenarlıkları Gizle</value></data>
+  <data name="ToolTipClose" xml:space="preserve"><value>Kapat</value></data>
+
+  <!-- Settings Window -->
+  <data name="SettingsHeader" xml:space="preserve"><value>Kick Chat Overlay Ayarları</value></data>
+  <data name="SectionChannel" xml:space="preserve"><value>KANAL</value></data>
+  <data name="LabelKickUsername" xml:space="preserve"><value>Kick Kullanıcı Adı</value></data>
+  <data name="LabelChatroomId" xml:space="preserve"><value>Kick Chatroom ID (isteğe bağlı, otomatik algılama başarısız olursa kullanın)</value></data>
+  <data name="ButtonConnect" xml:space="preserve"><value>Bağlan</value></data>
+  <data name="ButtonDisconnect" xml:space="preserve"><value>Bağlantıyı Kes</value></data>
+  <data name="SectionAppearance" xml:space="preserve"><value>GÖRÜNÜM</value></data>
+  <data name="LabelFontSize" xml:space="preserve"><value>Yazı Boyutu:</value></data>
+  <data name="LabelOpacity" xml:space="preserve"><value>Opaklık:</value></data>
+  <data name="LabelMaxMessages" xml:space="preserve"><value>Maks. Mesaj:</value></data>
+  <data name="SectionDisplay" xml:space="preserve"><value>EKRAN</value></data>
+  <data name="CheckShowPlatformIcon" xml:space="preserve"><value>Platform Simgesini Göster</value></data>
+  <data name="CheckShowBadges" xml:space="preserve"><value>Rozetleri Göster</value></data>
+  <data name="CheckShowEmotes" xml:space="preserve"><value>Emoteleri Göster</value></data>
+  <data name="SectionNotifications" xml:space="preserve"><value>BİLDİRİMLER</value></data>
+  <data name="LabelNotificationSound" xml:space="preserve"><value>Bildirim Sesi</value></data>
+  <data name="ButtonPreview" xml:space="preserve"><value>▶ Önizle</value></data>
+  <data name="LabelVolume" xml:space="preserve"><value>Ses:</value></data>
+  <data name="ButtonSaveClose" xml:space="preserve"><value>Kaydet ve Kapat</value></data>
+
+  <!-- Tray Menu -->
+  <data name="TrayToolTip" xml:space="preserve"><value>Kick Chat Overlay</value></data>
+  <data name="MenuShowSettings" xml:space="preserve"><value>Ayarları Göster</value></data>
+  <data name="MenuToggleBorders" xml:space="preserve"><value>Kenarlıkları Aç/Kapat</value></data>
+  <data name="MenuResetPosition" xml:space="preserve"><value>Pencere Konumunu Sıfırla</value></data>
+  <data name="MenuClearChat" xml:space="preserve"><value>Sohbeti Temizle</value></data>
+  <data name="MenuExit" xml:space="preserve"><value>Çıkış</value></data>
+
+  <!-- Status Messages -->
+  <data name="StatusDisconnected" xml:space="preserve"><value>Bağlantı Kesildi</value></data>
+  <data name="StatusEnterUsername" xml:space="preserve"><value>Bir Kick kullanıcı adı girin</value></data>
+  <data name="StatusConnecting" xml:space="preserve"><value>Bağlanıyor...</value></data>
+  <data name="StatusConnected" xml:space="preserve"><value>Bağlandı</value></data>
+  <data name="StatusKickConnected" xml:space="preserve"><value>Kick'e bağlanıldı</value></data>
+  <data name="StatusKickDisconnected" xml:space="preserve"><value>Kick bağlantısı kesildi</value></data>
+  <data name="StatusKickError" xml:space="preserve"><value>Kick hatası: {0}</value></data>
+  <data name="StatusConnectionError" xml:space="preserve"><value>Bağlantı hatası: {0}</value></data>
+</root>
