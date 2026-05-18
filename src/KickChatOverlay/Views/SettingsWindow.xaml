@@ -42,13 +42,8 @@
                        FontWeight="Bold" Margin="0,0,0,16"/>
 
             <!-- Connection -->
-            <TextBlock Text="CHANNELS" FontSize="11" Foreground="#888"
+            <TextBlock Text="CHANNEL" FontSize="11" Foreground="#888"
                        Margin="0,0,0,4"/>
-            <TextBlock Text="Twitch Username" Margin="0,0,0,4"/>
-            <TextBox Text="{Binding Settings.TwitchUsername, UpdateSourceTrigger=PropertyChanged}"
-                     Padding="6" Margin="0,0,0,8"
-                     Background="#2A2A3E" Foreground="White" BorderBrush="#444"/>
-
             <TextBlock Text="Kick Username" Margin="0,0,0,4"/>
             <TextBox Text="{Binding Settings.KickUsername, UpdateSourceTrigger=PropertyChanged}"
                      Padding="6" Margin="0,0,0,8"
@@ -62,7 +57,7 @@
 
             <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
                 <Button Content="Connect" Command="{Binding ConnectCommand}"
-                        Padding="16,6" Background="#9147FF" Foreground="White"
+                        Padding="16,6" Background="#53FC18" Foreground="#111"
                         BorderThickness="0" Cursor="Hand" Margin="0,0,8,0"/>
                 <Button Content="Disconnect" Command="{Binding DisconnectCommand}"
                         Padding="16,6" Background="#444" Foreground="White"
@@ -95,7 +90,7 @@
             <!-- Toggles -->
             <TextBlock Text="DISPLAY" FontSize="11" Foreground="#888"
                        Margin="0,0,0,8"/>
-            <CheckBox Content="Show Platform Icon (T/K)"
+            <CheckBox Content="Show Platform Icon"
                       IsChecked="{Binding Settings.ShowPlatformIcon}"
                       Foreground="White" Margin="0,0,0,6"/>
             <CheckBox Content="Show Badges"
@@ -137,7 +132,7 @@
             <Separator Background="#333" Margin="0,0,0,12"/>
 
             <Button Content="Save &amp; Close" Click="SaveClose_Click"
-                    Padding="16,8" Background="#9147FF" Foreground="White"
+                    Padding="16,8" Background="#53FC18" Foreground="#111"
                     BorderThickness="0" Cursor="Hand" HorizontalAlignment="Right"/>
         </StackPanel>
     </ScrollViewer>

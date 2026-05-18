@@ -39,8 +39,8 @@ public partial class App : Application
         using var bmp = new Bitmap(16, 16);
         using var g = Graphics.FromImage(bmp);
         using var font = new Font("Arial", 6, System.Drawing.FontStyle.Bold);
-        g.Clear(Color.FromArgb(145, 70, 255)); // Twitch purple
-        g.DrawString("SC", font, Brushes.White, 0, 2);
+        g.Clear(Color.FromArgb(30, 30, 46)); // dark background
+        g.DrawString("KC", font, Brushes.White, 0, 2);
         var hIcon = bmp.GetHicon();
         var icon = Icon.FromHandle(hIcon);
         var clonedIcon = (Icon)icon.Clone();

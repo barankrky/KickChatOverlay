@@ -1,6 +1,6 @@
 namespace KickChatOverlay.Models;
 
-public enum ChatPlatform { Twitch, Kick }
+public enum ChatPlatform { Kick }
 
 public sealed record ChatMessage
 {

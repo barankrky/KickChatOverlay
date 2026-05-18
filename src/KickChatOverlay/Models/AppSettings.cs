@@ -5,7 +5,6 @@ namespace KickChatOverlay.Models;
 
 public sealed class AppSettings
 {
-    public string TwitchUsername { get; set; } = "";
     public string KickUsername { get; set; } = "";
     public double FontSize { get; set; } = 14;
     public double Opacity { get; set; } = 1.0;

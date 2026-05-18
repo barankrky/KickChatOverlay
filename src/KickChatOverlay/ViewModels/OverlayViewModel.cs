@@ -9,9 +9,7 @@ namespace KickChatOverlay.ViewModels;
 
 public partial class OverlayViewModel : ObservableObject
 {
-    private readonly TwitchChatService _twitchService = new();
     private readonly KickChatService _kickService = new();
-    private readonly EmoteResolver _emoteResolver = new();
     private readonly SoundService _soundService = new();
     private readonly HashSet<string> _recentMessageIds = new();
 
@@ -27,14 +25,6 @@ public partial class OverlayViewModel : ObservableObject
     {
         _settings = AppSettings.Load();
         _soundService.SetSound(_settings.NotificationSound);
-
-        _twitchService.OnMessageReceived += HandleMessage;
-        _twitchService.OnError += err =>
-            Application.Current.Dispatcher.InvokeAsync(() => SetError($"Twitch error: {err}"));
-        _twitchService.OnConnected += () =>
-            Application.Current.Dispatcher.InvokeAsync(() => SetStatus("Twitch connected"));
-        _twitchService.OnDisconnected += () =>
-            Application.Current.Dispatcher.InvokeAsync(() => SetStatus("Twitch disconnected"));
 
         _kickService.OnMessageReceived += HandleMessage;
         _kickService.OnError += err =>
@@ -60,22 +50,11 @@ public partial class OverlayViewModel : ObservableObject
 
     private void HandleMessage(ChatMessage msg)
     {
-        // Deduplicate messages
         if (!_recentMessageIds.Add(msg.Id))
             return;
 
-        // Keep the set from growing unbounded
         if (_recentMessageIds.Count > 500)
             _recentMessageIds.Clear();
-
-        // Resolve third-party emotes for Twitch messages
-        if (msg.Platform == ChatPlatform.Twitch && Settings.ShowEmotes)
-        {
-            msg = msg with
-            {
-                Fragments = _emoteResolver.ResolveThirdPartyEmotes(msg.Fragments)
-            };
-        }
 
         Application.Current.Dispatcher.InvokeAsync(() =>
         {
@@ -90,31 +69,18 @@ public partial class OverlayViewModel : ObservableObject
     private async Task ConnectAsync()
     {
         _hasError = false;
-        var tasks = new List<Task>();
 
-        if (!string.IsNullOrWhiteSpace(Settings.TwitchUsername))
+        if (string.IsNullOrWhiteSpace(Settings.KickUsername))
         {
-            StatusText = "Connecting to Twitch...";
-            await _emoteResolver.LoadTwitchThirdPartyEmotesAsync(Settings.TwitchUsername);
-            tasks.Add(_twitchService.ConnectAsync(Settings.TwitchUsername));
-        }
-
-        if (!string.IsNullOrWhiteSpace(Settings.KickUsername))
-        {
-            StatusText = "Connecting to Kick...";
-            var manualId = string.IsNullOrWhiteSpace(Settings.KickChatroomId) ? null : Settings.KickChatroomId.Trim();
-            tasks.Add(_kickService.ConnectAsync(Settings.KickUsername, manualId));
-        }
-
-        if (tasks.Count == 0)
-        {
-            StatusText = "Enter at least one username";
+            StatusText = "Enter a Kick username";
             return;
         }
 
+        StatusText = "Connecting...";
         try
         {
-            await Task.WhenAll(tasks);
+            var manualId = string.IsNullOrWhiteSpace(Settings.KickChatroomId) ? null : Settings.KickChatroomId.Trim();
+            await _kickService.ConnectAsync(Settings.KickUsername, manualId);
             IsConnected = true;
             if (!_hasError)
                 StatusText = "Connected";
@@ -128,7 +94,6 @@ public partial class OverlayViewModel : ObservableObject
     [RelayCommand]
     private async Task DisconnectAsync()
     {
-        await _twitchService.DisconnectAsync();
         await _kickService.DisconnectAsync();
         IsConnected = false;
         _hasError = false;
