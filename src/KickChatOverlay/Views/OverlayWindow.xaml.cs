@@ -14,6 +14,7 @@ public partial class OverlayWindow : Window
 {
     private IntPtr _windowHwnd;
 
+
     public OverlayWindow()
     {
         InitializeComponent();
@@ -213,32 +214,36 @@ public partial class OverlayWindow : Window
         }
     }
 
-    #region Click-Through (WS_EX_TRANSPARENT)
+    #region Click-Through (WS_EX_LAYERED | WS_EX_TRANSPARENT)
 
     private void SetClickThrough(bool enable)
     {
         if (_windowHwnd == IntPtr.Zero)
             return;
 
-        // Apply to main window
         var exStyle = GetWindowLong(_windowHwnd, GWL_EXSTYLE);
-        SetWindowLong(_windowHwnd, GWL_EXSTYLE, enable ? exStyle | WS_EX_TRANSPARENT : exStyle & ~WS_EX_TRANSPARENT);
 
-        // Apply recursively to all child HWNDs (including WebView2's Chromium windows)
-        EnumChildWindows(_windowHwnd, (childHwnd, _) =>
+        if (enable)
         {
-            var childEx = GetWindowLong(childHwnd, GWL_EXSTYLE);
-            SetWindowLong(childHwnd, GWL_EXSTYLE, enable ? childEx | WS_EX_TRANSPARENT : childEx & ~WS_EX_TRANSPARENT);
-            return true;
-        }, IntPtr.Zero);
+            // Layered + Transparent together make the OS skip the entire
+            // window tree (including WebView2 child HWNDs) during hit-testing
+            SetWindowLong(_windowHwnd, GWL_EXSTYLE, exStyle | WS_EX_LAYERED | WS_EX_TRANSPARENT);
+            // Keep the window visually opaque in layer terms (DWM handles per-pixel alpha)
+            SetLayeredWindowAttributes(_windowHwnd, 0, 255, LWA_ALPHA);
+        }
+        else
+        {
+            SetWindowLong(_windowHwnd, GWL_EXSTYLE, exStyle & ~(WS_EX_LAYERED | WS_EX_TRANSPARENT));
+        }
 
-        // Force frame update so hit-test boundaries take effect immediately
         SetWindowPos(_windowHwnd, IntPtr.Zero, 0, 0, 0, 0,
             SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
     }
 
     private const int GWL_EXSTYLE = -20;
     private const int WS_EX_TRANSPARENT = 0x00000020;
+    private const int WS_EX_LAYERED = 0x00080000;
+    private const uint LWA_ALPHA = 0x00000002;
     private const uint SWP_FRAMECHANGED = 0x0020;
     private const uint SWP_NOMOVE = 0x0002;
     private const uint SWP_NOSIZE = 0x0001;
@@ -252,12 +257,10 @@ public partial class OverlayWindow : Window
     private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
     [DllImport("user32.dll")]
-    private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+    private static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
 
     [DllImport("user32.dll")]
-    private static extern bool EnumChildWindows(IntPtr hWndParent, EnumWindowsProc lpEnumFunc, IntPtr lParam);
-
-    private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+    private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
 
     #endregion
 
