@@ -101,6 +101,9 @@ Desktop.ini
 ## Publish output
 publish/
 
+## Installer output
+installer/output/
+
 ## Runtime settings
 settings.json
 

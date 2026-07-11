@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls.Primitives;
@@ -13,6 +14,8 @@ namespace KickChatOverlay.Views;
 public partial class OverlayWindow : Window
 {
     private IntPtr _windowHwnd;
+    private LowLevelHookProc? _keyboardProc;
+    private IntPtr _keyboardHookID;
 
 
     public OverlayWindow()
@@ -31,6 +34,10 @@ public partial class OverlayWindow : Window
         var vm = (OverlayViewModel)DataContext;
         vm.BotrixUrlChanged += OnBotrixUrlChanged;
         vm.PropertyChanged += OnViewModelPropertyChanged;
+
+        _keyboardProc = KeyboardHookCallback;
+        Loaded += (_, _) => InstallKeyboardHook();
+        Closed += (_, _) => RemoveKeyboardHook();
     }
 
     private void OnViewModelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -113,6 +120,74 @@ public partial class OverlayWindow : Window
             vm?.SetError(LocalizationService.Instance["StatusTimeout"]);
         });
     }
+
+    #region Keyboard Hook (Delete Toggle)
+
+    private void InstallKeyboardHook()
+    {
+        using var curProcess = Process.GetCurrentProcess();
+        using var curModule = curProcess.MainModule;
+        if (curModule == null || _keyboardProc == null)
+            return;
+        var hMod = GetModuleHandle(curModule.ModuleName);
+        _keyboardHookID = SetWindowsHookEx(WH_KEYBOARD_LL, _keyboardProc, hMod, 0);
+    }
+
+    private void RemoveKeyboardHook()
+    {
+        if (_keyboardHookID != IntPtr.Zero)
+            UnhookWindowsHookEx(_keyboardHookID);
+    }
+
+    private IntPtr KeyboardHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+    {
+        if (nCode >= 0 && (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN))
+        {
+            var hookStruct = Marshal.PtrToStructure<KBDLLHOOKSTRUCT>(lParam);
+            if (hookStruct.vkCode == VK_DELETE)
+            {
+                Dispatcher.InvokeAsync(() =>
+                {
+                    var vm = DataContext as OverlayViewModel;
+                    vm?.ToggleBordersCommand.Execute(null);
+                });
+            }
+        }
+
+        return CallNextHookEx(_keyboardHookID, nCode, wParam, lParam);
+    }
+
+    private const int WH_KEYBOARD_LL = 13;
+    private const int WM_KEYDOWN = 0x0100;
+    private const int WM_SYSKEYDOWN = 0x0104;
+    private const int VK_DELETE = 0x2E;
+
+    private delegate IntPtr LowLevelHookProc(int nCode, IntPtr wParam, IntPtr lParam);
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelHookProc lpfn, IntPtr hMod, uint dwThreadId);
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern IntPtr GetModuleHandle(string lpModuleName);
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct KBDLLHOOKSTRUCT
+    {
+        public uint vkCode;
+        public uint scanCode;
+        public uint flags;
+        public uint time;
+        public IntPtr dwExtraInfo;
+    }
+
+    #endregion
 
     private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
