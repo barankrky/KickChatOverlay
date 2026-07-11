@@ -42,6 +42,7 @@
   <data name="ToolTipSettings" xml:space="preserve"><value>Settings</value></data>
   <data name="ToolTipHideBorders" xml:space="preserve"><value>Hide Borders</value></data>
   <data name="ToolTipClose" xml:space="preserve"><value>Close</value></data>
+  <data name="ToolTipInfo" xml:space="preserve"><value>About</value></data>
 
   <!-- Settings Window -->
   <data name="SettingsHeader" xml:space="preserve"><value>Kick Chat Overlay Settings</value></data>

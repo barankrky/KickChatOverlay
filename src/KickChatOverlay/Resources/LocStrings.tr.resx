@@ -42,6 +42,7 @@
   <data name="ToolTipSettings" xml:space="preserve"><value>Ayarlar</value></data>
   <data name="ToolTipHideBorders" xml:space="preserve"><value>Kenarlıkları Gizle</value></data>
   <data name="ToolTipClose" xml:space="preserve"><value>Kapat</value></data>
+  <data name="ToolTipInfo" xml:space="preserve"><value>Hakkında</value></data>
 
   <!-- Settings Window -->
   <data name="SettingsHeader" xml:space="preserve"><value>Kick Chat Overlay Ayarları</value></data>

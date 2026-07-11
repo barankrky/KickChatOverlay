@@ -1,0 +1,55 @@
+<Window x:Class="KickChatOverlay.Views.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="About Kick Chat Overlay"
+        Width="360" Height="280"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#1E1E2E"
+        Foreground="White"
+        WindowStyle="None"
+        AllowsTransparency="False"
+        SnapsToDevicePixels="True">
+
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </Window.Resources>
+
+    <Border CornerRadius="8" Background="#1E1E2E" BorderBrush="#333" BorderThickness="1">
+        <DockPanel Margin="24,20,24,16">
+            <!-- Header: icon + title + version -->
+            <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Center" Margin="0,0,0,16">
+                <Image Source="pack://application:,,,/Resources/kick.ico"
+                       Width="48" Height="48" Margin="0,0,0,10"/>
+                <TextBlock Text="Kick Chat Overlay"
+                           FontSize="16" FontWeight="Bold"
+                           HorizontalAlignment="Center"/>
+                <TextBlock Text="{Binding AppVersion, FallbackValue=1.0.0.0}"
+                           FontSize="11" Foreground="#888"
+                           HorizontalAlignment="Center" Margin="0,2,0,0"/>
+            </StackPanel>
+
+            <!-- GitHub link -->
+            <TextBlock DockPanel.Dock="Top" HorizontalAlignment="Center" Margin="0,0,0,16">
+                <Hyperlink NavigateUri="https://github.com/barankrky/KickChatOverlay"
+                           RequestNavigate="Hyperlink_RequestNavigate"
+                           Foreground="#9147FF" FontSize="12">
+                    github.com/barankrky/KickChatOverlay
+                </Hyperlink>
+            </TextBlock>
+
+            <!-- Filler -->
+            <TextBlock DockPanel.Dock="Top" Text=""/>
+
+            <!-- Footer -->
+            <TextBlock DockPanel.Dock="Bottom" HorizontalAlignment="Center"
+                       FontSize="11" Foreground="#888" Margin="0,0,0,4">
+                <Run Text="Made with "/>
+                <Run Text="&#x2764;" Foreground="#FF4444"/>
+                <Run Text=" by Baran Karakaya"/>
+            </TextBlock>
+        </DockPanel>
+    </Border>
+</Window>
