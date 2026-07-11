@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -9,16 +8,14 @@ namespace KickChatOverlay.ViewModels;
 
 public partial class OverlayViewModel : ObservableObject
 {
-    private readonly KickChatService _kickService = new();
-    private readonly SoundService _soundService = new();
-    private readonly HashSet<string> _recentMessageIds = new();
-
-    public ObservableCollection<ChatMessage> Messages { get; } = [];
+    public event Action<Uri>? BotrixUrlChanged;
 
     [ObservableProperty] private bool _isConnected;
     [ObservableProperty] private bool _isBorderVisible = true;
+    [ObservableProperty] private bool _isWebViewReady;
     [ObservableProperty] private string _statusText = "";
     [ObservableProperty] private AppSettings _settings;
+    [ObservableProperty] private Uri? _botrixUrl;
     private bool _hasError;
 
     public OverlayViewModel()
@@ -26,17 +23,7 @@ public partial class OverlayViewModel : ObservableObject
         _settings = AppSettings.Load();
 
         LocalizationService.Instance.SetCulture(_settings.Language);
-        UpdateStatusText("StatusDisconnected");
-
-        _soundService.SetSound(_settings.NotificationSound);
-
-        _kickService.OnMessageReceived += HandleMessage;
-        _kickService.OnError += err =>
-            Application.Current.Dispatcher.InvokeAsync(() => SetError(LocalizationService.Instance.Format("StatusKickError", err)));
-        _kickService.OnConnected += () =>
-            Application.Current.Dispatcher.InvokeAsync(() => SetStatus("StatusKickConnected"));
-        _kickService.OnDisconnected += () =>
-            Application.Current.Dispatcher.InvokeAsync(() => SetStatus("StatusKickDisconnected"));
+        UpdateStatusText("StatusLoading");
 
         LocalizationService.Instance.PropertyChanged += (_, _) =>
         {
@@ -44,6 +31,15 @@ public partial class OverlayViewModel : ObservableObject
             Settings.Language = LocalizationService.Instance.CurrentLanguageCode;
             SaveSettings();
         };
+
+        RebuildBotrixUrl();
+    }
+
+    private void RebuildBotrixUrl()
+    {
+        var url = BotrixUrlBuilder.Build(Settings);
+        BotrixUrl = url;
+        BotrixUrlChanged?.Invoke(url);
     }
 
     private void UpdateStatusText(string key, params object[] args)
@@ -61,84 +57,28 @@ public partial class OverlayViewModel : ObservableObject
         if (IsConnected)
             UpdateStatusText("StatusConnected");
         else
-            UpdateStatusText("StatusDisconnected");
+            UpdateStatusText("StatusLoading");
     }
 
-    // Errors stick — non-error status won't overwrite an error
-    private void SetError(string msg)
+    public void SetConnected()
+    {
+        _hasError = false;
+        IsConnected = true;
+        IsWebViewReady = true;
+        UpdateStatusText("StatusConnected");
+    }
+
+    public void SetError(string msg)
     {
         _hasError = true;
-        StatusText = msg;
-    }
-
-    private void SetStatus(string key)
-    {
-        if (!_hasError)
-            UpdateStatusText(key);
-    }
-
-    private void HandleMessage(ChatMessage msg)
-    {
-        if (!_recentMessageIds.Add(msg.Id))
-            return;
-
-        if (_recentMessageIds.Count > 500)
-            _recentMessageIds.Clear();
-
-        Application.Current.Dispatcher.InvokeAsync(() =>
-        {
-            Messages.Add(msg);
-            while (Messages.Count > Settings.MaxMessages)
-                Messages.RemoveAt(0);
-            _soundService.Play(Settings.NotificationVolume);
-        });
-    }
-
-    [RelayCommand]
-    private async Task ConnectAsync()
-    {
-        _hasError = false;
-
-        if (string.IsNullOrWhiteSpace(Settings.KickUsername))
-        {
-            UpdateStatusText("StatusEnterUsername");
-            return;
-        }
-
-        UpdateStatusText("StatusConnecting");
-        try
-        {
-            var manualId = string.IsNullOrWhiteSpace(Settings.KickChatroomId) ? null : Settings.KickChatroomId.Trim();
-            await _kickService.ConnectAsync(Settings.KickUsername, manualId);
-            IsConnected = true;
-            if (!_hasError)
-                UpdateStatusText("StatusConnected");
-        }
-        catch (Exception ex)
-        {
-            SetError(LocalizationService.Instance.Format("StatusConnectionError", ex.Message));
-        }
-    }
-
-    [RelayCommand]
-    private async Task DisconnectAsync()
-    {
-        await _kickService.DisconnectAsync();
         IsConnected = false;
-        _hasError = false;
-        UpdateStatusText("StatusDisconnected");
+        StatusText = msg;
     }
 
     [RelayCommand]
     private void ToggleBorders()
     {
         IsBorderVisible = !IsBorderVisible;
-    }
-
-    [RelayCommand]
-    private void ClearChat()
-    {
-        Messages.Clear();
     }
 
     public void ToggleLanguage()
@@ -148,14 +88,11 @@ public partial class OverlayViewModel : ObservableObject
         LocalizationService.Instance.SetCulture(next);
     }
 
-    public void PreviewSound(string soundName, double volume)
+    public void OnSettingsUpdated()
     {
-        _soundService.PlayPreview(soundName, volume);
-    }
-
-    public void UpdateNotificationSound()
-    {
-        _soundService.SetSound(Settings.NotificationSound);
+        _hasError = false;
+        RebuildBotrixUrl();
+        SaveSettings();
     }
 
     public void SaveSettings()

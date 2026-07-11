@@ -45,23 +45,25 @@
 
   <!-- Settings Window -->
   <data name="SettingsHeader" xml:space="preserve"><value>Kick Chat Overlay Ayarları</value></data>
-  <data name="SectionChannel" xml:space="preserve"><value>KANAL</value></data>
-  <data name="LabelKickUsername" xml:space="preserve"><value>Kick Kullanıcı Adı</value></data>
-  <data name="LabelChatroomId" xml:space="preserve"><value>Kick Chatroom ID (isteğe bağlı, otomatik algılama başarısız olursa kullanın)</value></data>
-  <data name="ButtonConnect" xml:space="preserve"><value>Bağlan</value></data>
-  <data name="ButtonDisconnect" xml:space="preserve"><value>Bağlantıyı Kes</value></data>
-  <data name="SectionAppearance" xml:space="preserve"><value>GÖRÜNÜM</value></data>
-  <data name="LabelFontSize" xml:space="preserve"><value>Yazı Boyutu:</value></data>
+  <data name="SectionBotrix" xml:space="preserve"><value>BOTRIX WIDGET</value></data>
+  <data name="LabelBotrixId" xml:space="preserve"><value>Botrix Bot ID</value></data>
+  <data name="HintBotrixId" xml:space="preserve"><value>Bot ID'nizi botrix.live panel → Widget bölümünde bulabilirsiniz</value></data>
+  <data name="LabelPlatforms" xml:space="preserve"><value>Platformlar:</value></data>
+  <data name="SectionWidget" xml:space="preserve"><value>WIDGET GÖRÜNÜMÜ</value></data>
+  <data name="CheckPlatformIcon" xml:space="preserve"><value>Platform Simgesi</value></data>
+  <data name="CheckBots" xml:space="preserve"><value>Bot Mesajlarını Göster</value></data>
+  <data name="CheckEmojis" xml:space="preserve"><value>Emojiler</value></data>
+  <data name="CheckHideCommands" xml:space="preserve"><value>Komutları Gizle</value></data>
+  <data name="CheckTimestamp" xml:space="preserve"><value>Zaman Damgası</value></data>
+  <data name="CheckCheer" xml:space="preserve"><value>Cheer</value></data>
+  <data name="CheckPointsReward" xml:space="preserve"><value>Puan Ödülü</value></data>
+  <data name="CheckStreamTogether" xml:space="preserve"><value>Stream Together</value></data>
+  <data name="LabelAnimation" xml:space="preserve"><value>Animasyon:</value></data>
+  <data name="LabelShadowThickness" xml:space="preserve"><value>Gölge Kalınlığı:</value></data>
+  <data name="LabelWidgetSize" xml:space="preserve"><value>Widget Boyutu:</value></data>
+  <data name="LabelHideMessages" xml:space="preserve"><value>Mesajları Gizle (saniye):</value></data>
+  <data name="SectionOverlay" xml:space="preserve"><value>AŞIRI KAPLAMA</value></data>
   <data name="LabelOpacity" xml:space="preserve"><value>Opaklık:</value></data>
-  <data name="LabelMaxMessages" xml:space="preserve"><value>Maks. Mesaj:</value></data>
-  <data name="SectionDisplay" xml:space="preserve"><value>EKRAN</value></data>
-  <data name="CheckShowPlatformIcon" xml:space="preserve"><value>Platform Simgesini Göster</value></data>
-  <data name="CheckShowBadges" xml:space="preserve"><value>Rozetleri Göster</value></data>
-  <data name="CheckShowEmotes" xml:space="preserve"><value>Emoteleri Göster</value></data>
-  <data name="SectionNotifications" xml:space="preserve"><value>BİLDİRİMLER</value></data>
-  <data name="LabelNotificationSound" xml:space="preserve"><value>Bildirim Sesi</value></data>
-  <data name="ButtonPreview" xml:space="preserve"><value>▶ Önizle</value></data>
-  <data name="LabelVolume" xml:space="preserve"><value>Ses:</value></data>
   <data name="ButtonSaveClose" xml:space="preserve"><value>Kaydet ve Kapat</value></data>
 
   <!-- Tray Menu -->
@@ -69,16 +71,13 @@
   <data name="MenuShowSettings" xml:space="preserve"><value>Ayarları Göster</value></data>
   <data name="MenuToggleBorders" xml:space="preserve"><value>Kenarlıkları Aç/Kapat</value></data>
   <data name="MenuResetPosition" xml:space="preserve"><value>Pencere Konumunu Sıfırla</value></data>
-  <data name="MenuClearChat" xml:space="preserve"><value>Sohbeti Temizle</value></data>
   <data name="MenuExit" xml:space="preserve"><value>Çıkış</value></data>
 
   <!-- Status Messages -->
   <data name="StatusDisconnected" xml:space="preserve"><value>Bağlantı Kesildi</value></data>
-  <data name="StatusEnterUsername" xml:space="preserve"><value>Bir Kick kullanıcı adı girin</value></data>
-  <data name="StatusConnecting" xml:space="preserve"><value>Bağlanıyor...</value></data>
+  <data name="StatusLoading" xml:space="preserve"><value>Botrix widget yükleniyor...</value></data>
   <data name="StatusConnected" xml:space="preserve"><value>Bağlandı</value></data>
-  <data name="StatusKickConnected" xml:space="preserve"><value>Kick'e bağlanıldı</value></data>
-  <data name="StatusKickDisconnected" xml:space="preserve"><value>Kick bağlantısı kesildi</value></data>
-  <data name="StatusKickError" xml:space="preserve"><value>Kick hatası: {0}</value></data>
-  <data name="StatusConnectionError" xml:space="preserve"><value>Bağlantı hatası: {0}</value></data>
+  <data name="StatusBotrixError" xml:space="preserve"><value>Botrix hatası: {0}</value></data>
+  <data name="StatusWebviewError" xml:space="preserve"><value>WebView2 runtime bulunamadı. İndirmek için: https://go.microsoft.com/fwlink/p/?LinkId=2124703</value></data>
+  <data name="StatusTimeout" xml:space="preserve"><value>Zaman aşımı — Botrix widget yüklenemedi. İnternet bağlantınızı ve Botrix Bot ID'yi kontrol edin.</value></data>
 </root>

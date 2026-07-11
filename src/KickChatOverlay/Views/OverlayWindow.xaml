@@ -1,12 +1,12 @@
 <Window x:Class="KickChatOverlay.Views.OverlayWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:b="clr-namespace:KickChatOverlay.Behaviors"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         xmlns:vm="clr-namespace:KickChatOverlay.ViewModels"
         xmlns:conv="clr-namespace:KickChatOverlay.Converters"
         xmlns:loc="clr-namespace:KickChatOverlay.Extensions"
         Title="{loc:Loc WindowTitle}"
-        AllowsTransparency="True"
+        AllowsTransparency="False"
         WindowStyle="None"
         Topmost="True"
         ShowInTaskbar="True"
@@ -24,12 +24,6 @@
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
         <conv:StringToBrushConverter x:Key="StringToBrush"/>
-        <conv:PlatformToIconConverter x:Key="PlatformToIcon"/>
-        <conv:PlatformToColorConverter x:Key="PlatformToColor"/>
-        <conv:FontSizeToEmoteSizeConverter x:Key="FontSizeToEmoteSize"/>
-
-        <DropShadowEffect x:Key="TextShadow" ShadowDepth="1" BlurRadius="3"
-                          Color="Black" Opacity="0.9" Direction="315"/>
 
         <Style x:Key="TitleBarButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
@@ -61,8 +55,7 @@
     <Grid>
         <!-- Main container with semi-transparent background -->
         <Border CornerRadius="8"
-                Background="{Binding Settings.BackgroundColor, Converter={StaticResource StringToBrush}}"
-                Opacity="{Binding Settings.Opacity}">
+                Background="{Binding Settings.BackgroundColor, Converter={StaticResource StringToBrush}}">
         </Border>
 
         <DockPanel>
@@ -119,50 +112,34 @@
                            Margin="8,0"/>
             </Border>
 
-            <!-- Chat messages -->
-            <ScrollViewer x:Name="ChatScrollViewer"
-                          VerticalScrollBarVisibility="Hidden"
-                          HorizontalScrollBarVisibility="Disabled"
-                          CanContentScroll="True">
-                <ItemsControl ItemsSource="{Binding Messages}"
-                              x:Name="ChatList"
-                              Margin="4">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <VirtualizingStackPanel/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <WrapPanel Margin="2" Effect="{StaticResource TextShadow}">
-                                <!-- Platform icon -->
-                                <Viewbox Width="{Binding DataContext.Settings.FontSize, RelativeSource={RelativeSource AncestorType=Window}}"
-                                         Height="{Binding DataContext.Settings.FontSize, RelativeSource={RelativeSource AncestorType=Window}}"
-                                         Margin="0,0,4,0"
-                                         Visibility="{Binding DataContext.Settings.ShowPlatformIcon, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVisibility}}">
-                                    <Path Data="{Binding Platform, Converter={StaticResource PlatformToIcon}}"
-                                          Fill="{Binding Platform, Converter={StaticResource PlatformToColor}}"
-                                          Stretch="Uniform"/>
-                                </Viewbox>
-                                <!-- Username -->
-                                <TextBlock FontWeight="Bold"
-                                           FontSize="{Binding DataContext.Settings.FontSize, RelativeSource={RelativeSource AncestorType=Window}}"
-                                           Margin="0,0,4,0">
-                                    <Run Text="{Binding Username, Mode=OneWay}"
-                                         Foreground="{Binding UsernameColor, Converter={StaticResource StringToBrush}}"/>
-                                    <Run Text=": " Foreground="{Binding DataContext.Settings.TextColor, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource StringToBrush}}"/>
-                                </TextBlock>
-                                <!-- Message with inline emotes -->
-                                <TextBlock b:InlineMessageBehavior.Fragments="{Binding Fragments}"
-                                           b:InlineMessageBehavior.EmoteSize="{Binding DataContext.Settings.FontSize, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource FontSizeToEmoteSize}}"
-                                           Foreground="{Binding DataContext.Settings.TextColor, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource StringToBrush}}"
-                                           FontSize="{Binding DataContext.Settings.FontSize, RelativeSource={RelativeSource AncestorType=Window}}"
-                                           TextWrapping="Wrap"/>
-                            </WrapPanel>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
+            <!-- Botrix Chat widget via WebView2 (wrapped in Grid for loading overlay) -->
+            <Grid>
+                <wv2:WebView2 x:Name="ChatWebView"
+                               DefaultBackgroundColor="Transparent"
+                               Source="{Binding BotrixUrl, Mode=OneWay}"
+                               CoreWebView2InitializationCompleted="ChatWebView_CoreWebView2Ready"
+                               NavigationStarting="ChatWebView_NavigationStarting"
+                               NavigationCompleted="ChatWebView_NavigationCompleted"/>
+
+                <!-- Loading overlay (visible while WebView2 navigates) -->
+                <Border x:Name="LoadingOverlay"
+                        Background="#1E1E2E">
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock x:Name="LoadingStatusText"
+                                   Text="{loc:Loc StatusLoading}"
+                                   Foreground="#AAFFFFFF"
+                                   HorizontalAlignment="Center"
+                                   FontSize="13"/>
+                        <TextBlock x:Name="LoadingUrlText"
+                                   Foreground="#66888888"
+                                   HorizontalAlignment="Center"
+                                   FontSize="10"
+                                   Margin="0,6,0,0"
+                                   TextTrimming="CharacterEllipsis"
+                                   MaxWidth="300"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
         </DockPanel>
 
         <!-- Resize grips (visible only in setup mode) -->

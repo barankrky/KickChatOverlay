@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Reflection;
 using System.Windows;
+using Microsoft.Web.WebView2.Core;
 using H.NotifyIcon.Core;
 using KickChatOverlay.Services;
 using KickChatOverlay.ViewModels;
@@ -17,6 +18,8 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        CheckWebView2Runtime();
+
         _appIcon = LoadAppIcon();
         CreateTrayIcon();
 
@@ -24,6 +27,23 @@ public partial class App : Application
         {
             Dispatcher.Invoke(CreateTrayIcon);
         };
+    }
+
+    private static void CheckWebView2Runtime()
+    {
+        try
+        {
+            var _ = CoreWebView2Environment.GetAvailableBrowserVersionString();
+        }
+        catch
+        {
+            var loc = LocalizationService.Instance;
+            System.Windows.MessageBox.Show(
+                loc["StatusWebviewError"],
+                "WebView2 Required",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+        }
     }
 
     protected override void OnExit(ExitEventArgs e)
@@ -91,11 +111,6 @@ public partial class App : Application
                 vm.Settings.WindowWidth = 350;
                 vm.Settings.WindowHeight = 600;
             })));
-
-        menu.Items.Add(new PopupMenuSeparator());
-
-        menu.Items.Add(new PopupMenuItem(loc["MenuClearChat"], (_, _) =>
-            Dispatcher.Invoke(() => GetViewModel()?.ClearChatCommand.Execute(null))));
 
         menu.Items.Add(new PopupMenuSeparator());
 

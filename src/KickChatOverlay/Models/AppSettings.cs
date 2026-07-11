@@ -5,25 +5,28 @@ namespace KickChatOverlay.Models;
 
 public sealed class AppSettings
 {
-    public string KickUsername { get; set; } = "";
-    public double FontSize { get; set; } = 14;
-    public double Opacity { get; set; } = 1.0;
+    // Botrix widget settings
+    public string BotrixBotId { get; set; } = "6XCA19I8ALN1vPxcz3rR1Q";
+    public bool BotrixShowPlatformIcon { get; set; } = false;
+    public bool BotrixShowBots { get; set; } = false;
+    public bool BotrixShowEmojis { get; set; } = true;
+    public bool BotrixHideCommands { get; set; } = false;
+    public bool BotrixHideMessages { get; set; } = true;
+    public int BotrixHideMessagesSeconds { get; set; } = 10;
+    public int BotrixWidgetSize { get; set; } = 21;
+    public bool BotrixStreamTogether { get; set; } = true;
+    public bool BotrixCheer { get; set; } = true;
+    public bool BotrixPointsReward { get; set; } = false;
+    public bool BotrixShowTimestamp { get; set; } = false;
+    public int BotrixShadowThickness { get; set; } = 1;
+
+    // Overlay window
     public string BackgroundColor { get; set; } = "#00000000";
-    public string TextColor { get; set; } = "#FFFFFF";
-    public bool ShowPlatformIcon { get; set; } = true;
-    public bool ShowBadges { get; set; } = true;
-    public bool ShowEmotes { get; set; } = true;
-    public int MaxMessages { get; set; } = 200;
-    public bool MessageFadeEnabled { get; set; } = false;
-    public int MessageFadeSeconds { get; set; } = 30;
     public double WindowLeft { get; set; } = 100;
     public double WindowTop { get; set; } = 100;
     public double WindowWidth { get; set; } = 350;
     public double WindowHeight { get; set; } = 600;
-    public string NotificationSound { get; set; } = "None";
-    public double NotificationVolume { get; set; } = 0.5;
     public string Language { get; set; } = "tr";
-    public string KickChatroomId { get; set; } = "";
 
     private static readonly string SettingsPath = Path.Combine(
         AppDomain.CurrentDomain.BaseDirectory, "settings.json");

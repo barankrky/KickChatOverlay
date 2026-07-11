@@ -45,23 +45,25 @@
 
   <!-- Settings Window -->
   <data name="SettingsHeader" xml:space="preserve"><value>Kick Chat Overlay Settings</value></data>
-  <data name="SectionChannel" xml:space="preserve"><value>CHANNEL</value></data>
-  <data name="LabelKickUsername" xml:space="preserve"><value>Kick Username</value></data>
-  <data name="LabelChatroomId" xml:space="preserve"><value>Kick Chatroom ID (optional, use if auto-detect fails)</value></data>
-  <data name="ButtonConnect" xml:space="preserve"><value>Connect</value></data>
-  <data name="ButtonDisconnect" xml:space="preserve"><value>Disconnect</value></data>
-  <data name="SectionAppearance" xml:space="preserve"><value>APPEARANCE</value></data>
-  <data name="LabelFontSize" xml:space="preserve"><value>Font Size:</value></data>
+  <data name="SectionBotrix" xml:space="preserve"><value>BOTRIX WIDGET</value></data>
+  <data name="LabelBotrixId" xml:space="preserve"><value>Botrix Bot ID</value></data>
+  <data name="HintBotrixId" xml:space="preserve"><value>Find your Bot ID at botrix.live dashboard → Widget</value></data>
+  <data name="LabelPlatforms" xml:space="preserve"><value>Platforms:</value></data>
+  <data name="SectionWidget" xml:space="preserve"><value>WIDGET APPEARANCE</value></data>
+  <data name="CheckPlatformIcon" xml:space="preserve"><value>Platform Icon</value></data>
+  <data name="CheckBots" xml:space="preserve"><value>Show Bot Messages</value></data>
+  <data name="CheckEmojis" xml:space="preserve"><value>Emojis</value></data>
+  <data name="CheckHideCommands" xml:space="preserve"><value>Hide Commands</value></data>
+  <data name="CheckTimestamp" xml:space="preserve"><value>Timestamp</value></data>
+  <data name="CheckCheer" xml:space="preserve"><value>Cheer</value></data>
+  <data name="CheckPointsReward" xml:space="preserve"><value>Points Reward</value></data>
+  <data name="CheckStreamTogether" xml:space="preserve"><value>Stream Together</value></data>
+  <data name="LabelAnimation" xml:space="preserve"><value>Animation:</value></data>
+  <data name="LabelShadowThickness" xml:space="preserve"><value>Shadow Thickness:</value></data>
+  <data name="LabelWidgetSize" xml:space="preserve"><value>Widget Size:</value></data>
+  <data name="LabelHideMessages" xml:space="preserve"><value>Hide Messages After (seconds):</value></data>
+  <data name="SectionOverlay" xml:space="preserve"><value>OVERLAY</value></data>
   <data name="LabelOpacity" xml:space="preserve"><value>Opacity:</value></data>
-  <data name="LabelMaxMessages" xml:space="preserve"><value>Max Messages:</value></data>
-  <data name="SectionDisplay" xml:space="preserve"><value>DISPLAY</value></data>
-  <data name="CheckShowPlatformIcon" xml:space="preserve"><value>Show Platform Icon</value></data>
-  <data name="CheckShowBadges" xml:space="preserve"><value>Show Badges</value></data>
-  <data name="CheckShowEmotes" xml:space="preserve"><value>Show Emotes</value></data>
-  <data name="SectionNotifications" xml:space="preserve"><value>NOTIFICATIONS</value></data>
-  <data name="LabelNotificationSound" xml:space="preserve"><value>Notification Sound</value></data>
-  <data name="ButtonPreview" xml:space="preserve"><value>▶ Preview</value></data>
-  <data name="LabelVolume" xml:space="preserve"><value>Volume:</value></data>
   <data name="ButtonSaveClose" xml:space="preserve"><value>Save &amp; Close</value></data>
 
   <!-- Tray Menu -->
@@ -69,16 +71,13 @@
   <data name="MenuShowSettings" xml:space="preserve"><value>Show Settings</value></data>
   <data name="MenuToggleBorders" xml:space="preserve"><value>Toggle Borders</value></data>
   <data name="MenuResetPosition" xml:space="preserve"><value>Reset Window Position</value></data>
-  <data name="MenuClearChat" xml:space="preserve"><value>Clear Chat</value></data>
   <data name="MenuExit" xml:space="preserve"><value>Exit</value></data>
 
   <!-- Status Messages -->
   <data name="StatusDisconnected" xml:space="preserve"><value>Disconnected</value></data>
-  <data name="StatusEnterUsername" xml:space="preserve"><value>Enter a Kick username</value></data>
-  <data name="StatusConnecting" xml:space="preserve"><value>Connecting...</value></data>
+  <data name="StatusLoading" xml:space="preserve"><value>Loading Botrix widget...</value></data>
   <data name="StatusConnected" xml:space="preserve"><value>Connected</value></data>
-  <data name="StatusKickConnected" xml:space="preserve"><value>Kick connected</value></data>
-  <data name="StatusKickDisconnected" xml:space="preserve"><value>Kick disconnected</value></data>
-  <data name="StatusKickError" xml:space="preserve"><value>Kick error: {0}</value></data>
-  <data name="StatusConnectionError" xml:space="preserve"><value>Connection error: {0}</value></data>
+  <data name="StatusBotrixError" xml:space="preserve"><value>Botrix error: {0}</value></data>
+  <data name="StatusWebviewError" xml:space="preserve"><value>WebView2 runtime not found. Install from: https://go.microsoft.com/fwlink/p/?LinkId=2124703</value></data>
+  <data name="StatusTimeout" xml:space="preserve"><value>Timeout — Botrix widget failed to load. Check your internet connection and Botrix Bot ID.</value></data>
 </root>
