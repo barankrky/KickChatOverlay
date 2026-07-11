@@ -12,8 +12,8 @@ public sealed class AppSettings
     public bool BotrixShowEmojis { get; set; } = true;
     public bool BotrixHideCommands { get; set; } = false;
     public bool BotrixHideMessages { get; set; } = true;
-    public int BotrixHideMessagesSeconds { get; set; } = 10;
-    public int BotrixWidgetSize { get; set; } = 21;
+    public int BotrixHideMessagesSeconds { get; set; } = 60;
+    public int BotrixWidgetSize { get; set; } = 16;
     public bool BotrixStreamTogether { get; set; } = true;
     public bool BotrixCheer { get; set; } = true;
     public bool BotrixPointsReward { get; set; } = false;
