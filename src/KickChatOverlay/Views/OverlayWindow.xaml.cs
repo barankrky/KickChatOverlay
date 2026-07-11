@@ -47,6 +47,7 @@ public partial class OverlayWindow : Window
         base.OnSourceInitialized(e);
         _windowHwnd = new WindowInteropHelper(this).Handle;
         EnablePerPixelTransparency(_windowHwnd);
+        HwndSource.FromHwnd(_windowHwnd)?.AddHook(WndProcHook);
     }
 
     private static void EnablePerPixelTransparency(IntPtr hwnd)
@@ -169,6 +170,8 @@ public partial class OverlayWindow : Window
             return;
         }
 
+        CaptureWebView2HostHwnd();
+
         var core = ChatWebView.CoreWebView2;
         if (core == null) return;
 
@@ -214,30 +217,65 @@ public partial class OverlayWindow : Window
         }
     }
 
-    #region Click-Through (WS_EX_LAYERED | WS_EX_TRANSPARENT)
+    #region Click-Through
+
+    private bool _isClickThrough;
+    private IntPtr _webView2HostHwnd;
 
     private void SetClickThrough(bool enable)
     {
         if (_windowHwnd == IntPtr.Zero)
             return;
 
+        _isClickThrough = enable;
+
         var exStyle = GetWindowLong(_windowHwnd, GWL_EXSTYLE);
 
         if (enable)
         {
-            // Layered + Transparent together make the OS skip the entire
-            // window tree (including WebView2 child HWNDs) during hit-testing
             SetWindowLong(_windowHwnd, GWL_EXSTYLE, exStyle | WS_EX_LAYERED | WS_EX_TRANSPARENT);
-            // Keep the window visually opaque in layer terms (DWM handles per-pixel alpha)
             SetLayeredWindowAttributes(_windowHwnd, 0, 255, LWA_ALPHA);
+
+            if (_webView2HostHwnd != IntPtr.Zero)
+                EnableWindow(_webView2HostHwnd, false);
         }
         else
         {
             SetWindowLong(_windowHwnd, GWL_EXSTYLE, exStyle & ~(WS_EX_LAYERED | WS_EX_TRANSPARENT));
+
+            if (_webView2HostHwnd != IntPtr.Zero)
+                EnableWindow(_webView2HostHwnd, true);
         }
 
         SetWindowPos(_windowHwnd, IntPtr.Zero, 0, 0, 0, 0,
             SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+    }
+
+    private void CaptureWebView2HostHwnd()
+    {
+        EnumChildWindows(_windowHwnd, (hwnd, _) =>
+        {
+            var sb = new System.Text.StringBuilder(256);
+            GetClassName(hwnd, sb, 256);
+            if (sb.ToString() == "Chrome_WidgetWin_0")
+            {
+                _webView2HostHwnd = GetParent(hwnd);
+                return false;
+            }
+            return true;
+        }, IntPtr.Zero);
+    }
+
+    private IntPtr WndProcHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    {
+        if (msg == WM_STYLECHANGING && wParam.ToInt32() == GWL_EXSTYLE && _isClickThrough)
+        {
+            var ss = Marshal.PtrToStructure<STYLESTRUCT>(lParam);
+            ss.styleNew |= WS_EX_LAYERED | WS_EX_TRANSPARENT;
+            Marshal.StructureToPtr(ss, lParam, false);
+            handled = true;
+        }
+        return IntPtr.Zero;
     }
 
     private const int GWL_EXSTYLE = -20;
@@ -249,6 +287,7 @@ public partial class OverlayWindow : Window
     private const uint SWP_NOSIZE = 0x0001;
     private const uint SWP_NOZORDER = 0x0004;
     private const uint SWP_NOACTIVATE = 0x0010;
+    private const int WM_STYLECHANGING = 0x007C;
 
     [DllImport("user32.dll")]
     private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
@@ -261,6 +300,29 @@ public partial class OverlayWindow : Window
 
     [DllImport("user32.dll")]
     private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool EnableWindow(IntPtr hWnd, bool bEnable);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool EnumChildWindows(IntPtr hWndParent, EnumWindowProc lpEnumFunc, IntPtr lParam);
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    private static extern int GetClassName(IntPtr hWnd, System.Text.StringBuilder lpClassName, int nMaxCount);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetParent(IntPtr hWnd);
+
+    private delegate bool EnumWindowProc(IntPtr hWnd, IntPtr lParam);
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct STYLESTRUCT
+    {
+        public int styleOld;
+        public int styleNew;
+    }
 
     #endregion
 
