@@ -66,6 +66,8 @@
   <data name="SectionOverlay" xml:space="preserve"><value>OVERLAY</value></data>
   <data name="LabelOpacity" xml:space="preserve"><value>Opacity:</value></data>
   <data name="ButtonSaveClose" xml:space="preserve"><value>Save &amp; Close</value></data>
+  <data name="AboutMadeWithLovePrefix" xml:space="preserve"><value>Made with </value></data>
+  <data name="AboutMadeWithLoveSuffix" xml:space="preserve"><value> by Baran Karakaya</value></data>
 
   <!-- Tray Menu -->
   <data name="TrayToolTip" xml:space="preserve"><value>Kick Chat Overlay</value></data>

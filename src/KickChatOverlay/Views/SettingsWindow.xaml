@@ -114,6 +114,8 @@
 
             <!-- About -->
             <StackPanel HorizontalAlignment="Center" Margin="0,0,0,4">
+                <Image Source="pack://application:,,,/Resources/kick.ico"
+                       Width="40" Height="40" Margin="0,0,0,8"/>
                 <TextBlock Text="Kick Chat Overlay"
                            FontSize="13" FontWeight="Bold"
                            HorizontalAlignment="Center"/>
@@ -124,14 +126,14 @@
                     <Hyperlink NavigateUri="https://github.com/barankrky/KickChatOverlay"
                                RequestNavigate="Hyperlink_RequestNavigate"
                                Foreground="#9147FF" FontSize="11">
-                        github.com/barankrky/KickChatOverlay
+                        https://github.com/barankrky/KickChatOverlay
                     </Hyperlink>
                 </TextBlock>
                 <TextBlock HorizontalAlignment="Center"
                            FontSize="10" Foreground="#888">
-                    <Run Text="Made with "/>
+                    <Run Text="{loc:Loc AboutMadeWithLovePrefix}"/>
                     <Run Text="&#x2764;" Foreground="#FF4444"/>
-                    <Run Text=" by Baran Karakaya"/>
+                    <Run Text="{loc:Loc AboutMadeWithLoveSuffix}"/>
                 </TextBlock>
             </StackPanel>
         </StackPanel>

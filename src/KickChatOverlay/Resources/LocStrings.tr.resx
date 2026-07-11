@@ -66,6 +66,8 @@
   <data name="SectionOverlay" xml:space="preserve"><value>AŞIRI KAPLAMA</value></data>
   <data name="LabelOpacity" xml:space="preserve"><value>Opaklık:</value></data>
   <data name="ButtonSaveClose" xml:space="preserve"><value>Kaydet ve Kapat</value></data>
+  <data name="AboutMadeWithLovePrefix" xml:space="preserve"><value>Baran Karakaya tarafından </value></data>
+  <data name="AboutMadeWithLoveSuffix" xml:space="preserve"><value> ile yapıldı</value></data>
 
   <!-- Tray Menu -->
   <data name="TrayToolTip" xml:space="preserve"><value>Kick Chat Overlay</value></data>
