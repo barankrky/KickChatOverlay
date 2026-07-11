@@ -12,6 +12,8 @@ namespace KickChatOverlay.Views;
 
 public partial class OverlayWindow : Window
 {
+    private IntPtr _windowHwnd;
+
     public OverlayWindow()
     {
         InitializeComponent();
@@ -27,13 +29,23 @@ public partial class OverlayWindow : Window
 
         var vm = (OverlayViewModel)DataContext;
         vm.BotrixUrlChanged += OnBotrixUrlChanged;
+        vm.PropertyChanged += OnViewModelPropertyChanged;
+    }
+
+    private void OnViewModelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != nameof(OverlayViewModel.IsBorderVisible))
+            return;
+
+        var vm = (OverlayViewModel)DataContext;
+        SetClickThrough(!vm.IsBorderVisible);
     }
 
     protected override void OnSourceInitialized(EventArgs e)
     {
         base.OnSourceInitialized(e);
-        var hwnd = new WindowInteropHelper(this).Handle;
-        EnablePerPixelTransparency(hwnd);
+        _windowHwnd = new WindowInteropHelper(this).Handle;
+        EnablePerPixelTransparency(_windowHwnd);
     }
 
     private static void EnablePerPixelTransparency(IntPtr hwnd)
@@ -200,6 +212,54 @@ public partial class OverlayWindow : Window
                 $"Navigation failed (HTTP {e.HttpStatusCode})"));
         }
     }
+
+    #region Click-Through (WS_EX_TRANSPARENT)
+
+    private void SetClickThrough(bool enable)
+    {
+        if (_windowHwnd == IntPtr.Zero)
+            return;
+
+        // Apply to main window
+        var exStyle = GetWindowLong(_windowHwnd, GWL_EXSTYLE);
+        SetWindowLong(_windowHwnd, GWL_EXSTYLE, enable ? exStyle | WS_EX_TRANSPARENT : exStyle & ~WS_EX_TRANSPARENT);
+
+        // Apply recursively to all child HWNDs (including WebView2's Chromium windows)
+        EnumChildWindows(_windowHwnd, (childHwnd, _) =>
+        {
+            var childEx = GetWindowLong(childHwnd, GWL_EXSTYLE);
+            SetWindowLong(childHwnd, GWL_EXSTYLE, enable ? childEx | WS_EX_TRANSPARENT : childEx & ~WS_EX_TRANSPARENT);
+            return true;
+        }, IntPtr.Zero);
+
+        // Force frame update so hit-test boundaries take effect immediately
+        SetWindowPos(_windowHwnd, IntPtr.Zero, 0, 0, 0, 0,
+            SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+    }
+
+    private const int GWL_EXSTYLE = -20;
+    private const int WS_EX_TRANSPARENT = 0x00000020;
+    private const uint SWP_FRAMECHANGED = 0x0020;
+    private const uint SWP_NOMOVE = 0x0002;
+    private const uint SWP_NOSIZE = 0x0001;
+    private const uint SWP_NOZORDER = 0x0004;
+    private const uint SWP_NOACTIVATE = 0x0010;
+
+    [DllImport("user32.dll")]
+    private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+    [DllImport("user32.dll")]
+    private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+    [DllImport("user32.dll")]
+    private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+
+    [DllImport("user32.dll")]
+    private static extern bool EnumChildWindows(IntPtr hWndParent, EnumWindowsProc lpEnumFunc, IntPtr lParam);
+
+    private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+
+    #endregion
 
     #region Win32 DWM Transparency
 
