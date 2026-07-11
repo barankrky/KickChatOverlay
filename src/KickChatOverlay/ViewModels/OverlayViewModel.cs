@@ -13,6 +13,7 @@ public partial class OverlayViewModel : ObservableObject
     [ObservableProperty] private bool _isConnected;
     [ObservableProperty] private bool _isBorderVisible = true;
     [ObservableProperty] private bool _isWebViewReady;
+    [ObservableProperty] private bool _isBotrixIdVisible;
     [ObservableProperty] private string _statusText = "";
     [ObservableProperty] private AppSettings _settings;
     [ObservableProperty] private Uri? _botrixUrl;
@@ -79,6 +80,12 @@ public partial class OverlayViewModel : ObservableObject
     private void ToggleBorders()
     {
         IsBorderVisible = !IsBorderVisible;
+    }
+
+    [RelayCommand]
+    private void ToggleBotrixIdVisibility()
+    {
+        IsBotrixIdVisible = !IsBotrixIdVisible;
     }
 
     public void ToggleLanguage()

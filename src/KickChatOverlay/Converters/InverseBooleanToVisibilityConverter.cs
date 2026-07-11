@@ -13,6 +13,6 @@ public class InverseBooleanToVisibilityConverter : IValueConverter
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        throw new NotSupportedException();
+        return value is Visibility v && v == Visibility.Collapsed;
     }
 }
