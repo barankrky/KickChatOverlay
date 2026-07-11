@@ -138,11 +138,6 @@ public partial class OverlayWindow : Window
         settingsWindow.ShowDialog();
     }
 
-    private void About_Click(object sender, RoutedEventArgs e)
-    {
-        new AboutWindow { Owner = this }.ShowDialog();
-    }
-
     private void Close_Click(object sender, RoutedEventArgs e)
     {
         var vm = (OverlayViewModel)DataContext;

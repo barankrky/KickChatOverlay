@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:loc="clr-namespace:KickChatOverlay.Extensions"
         Title="{loc:Loc SettingsWindowTitle}"
-        Width="420" Height="620"
+        Width="420" Height="680"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         Background="#1E1E2E"
@@ -58,32 +58,32 @@
             <TextBlock Text="{loc:Loc SectionWidget}" FontSize="11" Foreground="#888"
                        Margin="0,0,0,8"/>
 
-            <StackPanel Margin="0,0,0,12">
+            <UniformGrid Columns="2" Margin="0,0,0,12" Rows="4">
                 <CheckBox Content="{loc:Loc CheckPlatformIcon}"
                           IsChecked="{Binding Settings.BotrixShowPlatformIcon}"
-                          Foreground="White" Margin="0,0,0,4"/>
-                <CheckBox Content="{loc:Loc CheckBots}"
-                          IsChecked="{Binding Settings.BotrixShowBots}"
-                          Foreground="White" Margin="0,0,0,4"/>
-                <CheckBox Content="{loc:Loc CheckEmojis}"
-                          IsChecked="{Binding Settings.BotrixShowEmojis}"
-                          Foreground="White" Margin="0,0,0,4"/>
-                <CheckBox Content="{loc:Loc CheckHideCommands}"
-                          IsChecked="{Binding Settings.BotrixHideCommands}"
-                          Foreground="White" Margin="0,0,0,4"/>
+                          Foreground="White" Margin="0,0,8,4"/>
                 <CheckBox Content="{loc:Loc CheckTimestamp}"
                           IsChecked="{Binding Settings.BotrixShowTimestamp}"
                           Foreground="White" Margin="0,0,0,4"/>
+                <CheckBox Content="{loc:Loc CheckBots}"
+                          IsChecked="{Binding Settings.BotrixShowBots}"
+                          Foreground="White" Margin="0,0,8,4"/>
                 <CheckBox Content="{loc:Loc CheckCheer}"
                           IsChecked="{Binding Settings.BotrixCheer}"
                           Foreground="White" Margin="0,0,0,4"/>
+                <CheckBox Content="{loc:Loc CheckEmojis}"
+                          IsChecked="{Binding Settings.BotrixShowEmojis}"
+                          Foreground="White" Margin="0,0,8,4"/>
                 <CheckBox Content="{loc:Loc CheckPointsReward}"
                           IsChecked="{Binding Settings.BotrixPointsReward}"
                           Foreground="White" Margin="0,0,0,4"/>
+                <CheckBox Content="{loc:Loc CheckHideCommands}"
+                          IsChecked="{Binding Settings.BotrixHideCommands}"
+                          Foreground="White" Margin="0,0,8,4"/>
                 <CheckBox Content="{loc:Loc CheckStreamTogether}"
                           IsChecked="{Binding Settings.BotrixStreamTogether}"
-                          Foreground="White" Margin="0,0,0,8"/>
-            </StackPanel>
+                          Foreground="White" Margin="0,0,0,4"/>
+            </UniformGrid>
 
             <TextBlock Margin="0,0,0,4">
                 <Run Text="{loc:Loc LabelWidgetSize}" />
@@ -109,6 +109,31 @@
             <Button Content="{loc:Loc ButtonSaveClose}" Click="SaveClose_Click"
                     Padding="16,8" Background="#53FC18" Foreground="#111"
                     BorderThickness="0" Cursor="Hand" HorizontalAlignment="Right"/>
+
+            <Separator Background="#333" Margin="0,12,0,12"/>
+
+            <!-- About -->
+            <StackPanel HorizontalAlignment="Center" Margin="0,0,0,4">
+                <TextBlock Text="Kick Chat Overlay"
+                           FontSize="13" FontWeight="Bold"
+                           HorizontalAlignment="Center"/>
+                <TextBlock x:Name="VersionText"
+                           FontSize="10" Foreground="#888"
+                           HorizontalAlignment="Center" Margin="0,2,0,4"/>
+                <TextBlock HorizontalAlignment="Center" Margin="0,0,0,4">
+                    <Hyperlink NavigateUri="https://github.com/barankrky/KickChatOverlay"
+                               RequestNavigate="Hyperlink_RequestNavigate"
+                               Foreground="#9147FF" FontSize="11">
+                        github.com/barankrky/KickChatOverlay
+                    </Hyperlink>
+                </TextBlock>
+                <TextBlock HorizontalAlignment="Center"
+                           FontSize="10" Foreground="#888">
+                    <Run Text="Made with "/>
+                    <Run Text="&#x2764;" Foreground="#FF4444"/>
+                    <Run Text=" by Baran Karakaya"/>
+                </TextBlock>
+            </StackPanel>
         </StackPanel>
     </ScrollViewer>
 </Window>

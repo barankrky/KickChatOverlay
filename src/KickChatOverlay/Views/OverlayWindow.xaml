@@ -89,9 +89,6 @@
                         <Button Content="&#x2699;" ToolTip="{loc:Loc ToolTipSettings}"
                                 Click="Settings_Click"
                                 Style="{StaticResource TitleBarButton}"/>
-                        <Button Content="&#x24D8;" ToolTip="{loc:Loc ToolTipInfo}"
-                                Click="About_Click"
-                                Style="{StaticResource TitleBarButton}"/>
                         <Button Content="&#x2796;" ToolTip="{loc:Loc ToolTipHideBorders}"
                                 Command="{Binding ToggleBordersCommand}"
                                 Style="{StaticResource TitleBarButton}"/>
